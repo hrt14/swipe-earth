@@ -15,69 +15,30 @@ const encounters = [
   { depth: 8200, name: 'HADAL SHADOW', jp: '超深海の影', type: 'shadow', note: '観測できる範囲は急激に狭くなる。暗闇の向こうに何がいるかは、まだ分からない。', mystery: true },
   { depth: 10900, name: 'THE UNKNOWN', jp: '未知', type: 'unknown', note: '地球の最深部。人類はここまで来た。それでも、海のすべてを知ったわけではない。', mystery: true }
 ];
+const zones=[{from:0,to:200,label:'SUNLIGHT ZONE',jp:'表層'},{from:200,to:1000,label:'TWILIGHT ZONE',jp:'薄明帯'},{from:1000,to:4000,label:'MIDNIGHT ZONE',jp:'漸深海帯'},{from:4000,to:6000,label:'ABYSS',jp:'深海底帯'},{from:6000,to:11000,label:'HADAL ZONE',jp:'超深海帯'}];
+const milestones=[{depth:200,title:'SUNLIGHT ENDS',text:'ここから先、青以外の光はほとんど届かない。'},{depth:1000,title:'TOTAL DARKNESS',text:'太陽の光が消える。生き物自身の光が景色になる。'},{depth:4000,title:'400 ATM',text:'地上のおよそ400倍の圧力。人間はそのままでは存在できない。'},{depth:6000,title:'HADAL BEGINS',text:'海溝だけに存在する、地球でもっとも深い領域へ。'}];
+function getZone(depth){return zones.find(z=>depth>=z.from&&depth<z.to)||zones[zones.length-1]}
+function Creature({type}){return <div className={`creature-art creature-${type}`} aria-hidden="true"><i/><b/><em/><span/><small/></div>}
 
-const zones = [
-  { from: 0, to: 200, label: 'SUNLIGHT ZONE', jp: '表層' },
-  { from: 200, to: 1000, label: 'TWILIGHT ZONE', jp: '薄明帯' },
-  { from: 1000, to: 4000, label: 'MIDNIGHT ZONE', jp: '漸深海帯' },
-  { from: 4000, to: 6000, label: 'ABYSS', jp: '深海底帯' },
-  { from: 6000, to: 11000, label: 'HADAL ZONE', jp: '超深海帯' }
-];
-
-const milestones = [
-  { depth: 200, title: 'SUNLIGHT ENDS', text: 'ここから先、青以外の光はほとんど届かない。' },
-  { depth: 1000, title: 'TOTAL DARKNESS', text: '太陽の光が消える。生き物自身の光が景色になる。' },
-  { depth: 4000, title: '400 ATM', text: '地上のおよそ400倍の圧力。人間はそのままでは存在できない。' },
-  { depth: 6000, title: 'HADAL BEGINS', text: '海溝だけに存在する、地球でもっとも深い領域へ。' }
-];
-
-function getZone(depth) { return zones.find((zone) => depth >= zone.from && depth < zone.to) || zones[zones.length - 1]; }
-function Creature({ type }) { return <div className={`creature-art creature-${type}`} aria-hidden="true"><i/><b/><em/><span/><small/></div>; }
-
-export default function Ocean() {
-  const [depth, setDepth] = useState(0);
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const ratio = maxScroll > 0 ? Math.min(1, Math.max(0, window.scrollY / maxScroll)) : 0;
-      setProgress(ratio); setDepth(Math.round(ratio * 11000));
-    };
-    onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const zone = useMemo(() => getZone(depth), [depth]);
-  const temp = Math.max(1.2, 24 - depth / 520).toFixed(1);
-  const pressure = Math.max(1, depth / 10).toFixed(0);
-
-  return (
-    <main className="ocean-experience">
-      <div className="ocean-ui">
-        <a className="ocean-brand" href="/">SWIPE EARTH <span>/ OCEAN</span></a>
-        <div className="ocean-zone"><small>{zone.jp}</small><strong>{zone.label}</strong></div>
-        <div className="ocean-stats"><span><small>TEMP</small>{temp}°C</span><span><small>PRESSURE</small>{pressure} atm</span></div>
-        <div className="depth-readout"><small>DEPTH</small><strong>{depth.toLocaleString()} m</strong></div>
-      </div>
-
-      <aside className="depth-rail" aria-hidden="true"><div className="rail-line" /><div className="rail-progress" style={{ height: `${progress * 100}%` }} />{[0,200,1000,4000,6000,11000].map((value)=><div className="rail-mark" key={value} style={{top:`${value/110}%`}}><span>{value.toLocaleString()}m</span></div>)}</aside>
-
-      <section className="surface-scene"><div className="sun-disc"/><div className="sun-ray ray-a"/><div className="sun-ray ray-b"/><div className="wave wave-a"/><div className="wave wave-b"/><div className="surface-birds">⌁　⌁</div><div className="surface-copy"><p>SWIPE EARTH: OCEAN</p><h1>海面から、<br/>地球の底へ。</h1><span>SCROLL / SWIPE TO DIVE</span><b>↓</b></div></section>
-
-      <div className="water-column">
-        <div className="ambient ambient-school school-a" aria-hidden="true">{Array.from({length:13}).map((_,i)=><i key={i}/>)}</div>
-        <div className="ambient ambient-school school-b" aria-hidden="true">{Array.from({length:9}).map((_,i)=><i key={i}/>)}</div>
-        <div className="ambient jelly-field" aria-hidden="true">{Array.from({length:7}).map((_,i)=><i key={i}/>)}</div>
-        <div className="ambient bio-stars" aria-hidden="true">{Array.from({length:18}).map((_,i)=><i key={i}/>)}</div>
-        <div className="trench-wall wall-left" aria-hidden="true"/><div className="trench-wall wall-right" aria-hidden="true"/>
-        <div className="particles" aria-hidden="true">{Array.from({ length: 26 }).map((_, i) => <i key={i} />)}</div>
-        {zones.map((z)=><div className="zone-divider" key={z.label} style={{top:`${z.from/110}%`}}><span>{z.label}</span><small>{z.jp}</small></div>)}
-        {milestones.map((m)=><div className="depth-milestone" key={m.depth} style={{top:`${2+(m.depth/11000)*92}%`}}><small>{m.depth.toLocaleString()} m</small><strong>{m.title}</strong><p>{m.text}</p></div>)}
-        {encounters.map((item,index)=><article className={`encounter-row ${index%2?'right':'left'} ${item.mystery?'mystery':''} ${item.scale==='giant'?'giant':''}`} key={item.depth} style={{top:`${3+(item.depth/11000)*92}%`}}><div className="encounter-depth">{item.depth.toLocaleString()} m</div><div className="creature-stage"><Creature type={item.type}/></div><div className="encounter-copy"><p>{item.mystery?'UNCONFIRMED / LEGEND':'ENCOUNTER'}</p><h2>{item.name}</h2><h3>{item.jp}</h3><div className="rule"/><div className="note">{item.note}</div></div></article>)}
-      </div>
-
-      <section className="ocean-floor"><div className="floor-glow"/><div className="floor-ridge"/><p>10,900 m — CHALLENGER DEEP</p><h2>ここまで来ても、<br/>まだ未知は残っている。</h2><a href="/">EXPLORE ANOTHER WORLD →</a></section>
-    </main>
-  );
+export default function Ocean(){
+ const[depth,setDepth]=useState(0);const[progress,setProgress]=useState(0);
+ useEffect(()=>{const onScroll=()=>{const max=document.documentElement.scrollHeight-window.innerHeight;const ratio=max>0?Math.min(1,Math.max(0,window.scrollY/max)):0;setProgress(ratio);setDepth(Math.round(ratio*11000))};onScroll();window.addEventListener('scroll',onScroll,{passive:true});return()=>window.removeEventListener('scroll',onScroll)},[]);
+ const zone=useMemo(()=>getZone(depth),[depth]);const temp=Math.max(1.2,24-depth/520).toFixed(1);const pressure=Math.max(1,depth/10).toFixed(0);
+ return <main className="ocean-experience">
+  <style jsx global>{`
+   .ocean-stats{display:flex;gap:18px;text-align:right}.ocean-stats span{font-size:10px;letter-spacing:.06em}.ocean-stats small{display:block;font-size:7px;letter-spacing:.18em;opacity:.45;margin-bottom:4px}
+   .surface-birds{position:absolute;top:11%;right:15%;font-size:28px;letter-spacing:.4em;color:rgba(255,255,255,.55);transform:rotate(-8deg)}
+   .ambient{position:absolute;z-index:2;pointer-events:none}.ambient-school i{position:absolute;width:28px;height:10px;border-radius:70% 35% 35% 70%;background:rgba(198,232,238,.28)}.ambient-school i:after{content:'';position:absolute;right:-7px;top:1px;border-left:9px solid rgba(198,232,238,.25);border-top:4px solid transparent;border-bottom:4px solid transparent}.school-a{left:8%;top:5%;width:360px;height:260px;opacity:.8}.school-b{right:8%;top:10%;width:280px;height:220px;transform:scale(.7);opacity:.45}.ambient-school i:nth-child(1){left:4%;top:40%}.ambient-school i:nth-child(2){left:18%;top:22%}.ambient-school i:nth-child(3){left:28%;top:58%}.ambient-school i:nth-child(4){left:40%;top:35%}.ambient-school i:nth-child(5){left:52%;top:15%}.ambient-school i:nth-child(6){left:63%;top:47%}.ambient-school i:nth-child(7){left:75%;top:28%}.ambient-school i:nth-child(8){left:84%;top:63%}.ambient-school i:nth-child(9){left:21%;top:78%}.ambient-school i:nth-child(10){left:49%;top:75%}.ambient-school i:nth-child(11){left:69%;top:83%}.ambient-school i:nth-child(12){left:87%;top:10%}.ambient-school i:nth-child(13){left:8%;top:7%}
+   .jelly-field{left:4%;right:4%;top:7%;height:9%;opacity:.48}.jelly-field i{position:absolute;width:42px;height:30px;border-radius:55% 55% 35% 35%;border:1px solid rgba(164,227,245,.45);background:radial-gradient(circle at 50% 30%,rgba(185,240,250,.2),transparent 65%)}.jelly-field i:after{content:'〰 〰 〰';position:absolute;top:22px;left:2px;font-size:13px;color:rgba(168,224,242,.35);letter-spacing:-5px}.jelly-field i:nth-child(1){left:10%;top:16%}.jelly-field i:nth-child(2){left:29%;top:48%;transform:scale(.65)}.jelly-field i:nth-child(3){left:48%;top:8%;transform:scale(1.25)}.jelly-field i:nth-child(4){left:68%;top:62%;transform:scale(.8)}.jelly-field i:nth-child(5){left:84%;top:27%;transform:scale(.55)}.jelly-field i:nth-child(6){left:58%;top:78%;transform:scale(.5)}.jelly-field i:nth-child(7){left:18%;top:76%;transform:scale(.9)}
+   .bio-stars{left:0;right:0;top:16%;height:33%;opacity:.6}.bio-stars i{position:absolute;width:4px;height:4px;border-radius:50%;background:#a4f2ea;box-shadow:0 0 13px 4px rgba(118,235,225,.3);animation:bioPulse 3s ease-in-out infinite}.bio-stars i:nth-child(3n){left:20%;}.bio-stars i:nth-child(3n+1){left:52%}.bio-stars i:nth-child(3n+2){left:82%}.bio-stars i:nth-child(1){top:6%}.bio-stars i:nth-child(2){top:12%}.bio-stars i:nth-child(3){top:18%}.bio-stars i:nth-child(4){top:24%}.bio-stars i:nth-child(5){top:31%}.bio-stars i:nth-child(6){top:39%}.bio-stars i:nth-child(7){top:47%}.bio-stars i:nth-child(8){top:54%}.bio-stars i:nth-child(9){top:61%}.bio-stars i:nth-child(10){top:68%}.bio-stars i:nth-child(11){top:75%}.bio-stars i:nth-child(12){top:82%}.bio-stars i:nth-child(13){top:90%}@keyframes bioPulse{50%{opacity:.25;transform:scale(.45)}}
+   .trench-wall{position:absolute;z-index:1;top:53%;bottom:0;width:17%;opacity:.62;background:linear-gradient(110deg,transparent 0 18%,rgba(0,0,0,.7) 19% 100%);clip-path:polygon(0 0,62% 4%,35% 12%,76% 21%,42% 35%,91% 48%,50% 61%,80% 73%,37% 86%,100% 100%,0 100%)}.wall-left{left:0}.wall-right{right:0;transform:scaleX(-1)}
+   .depth-milestone{position:absolute;z-index:3;left:50%;width:min(560px,70vw);transform:translate(-50%,-50%);text-align:center;padding:36px 30px;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);background:linear-gradient(90deg,transparent,rgba(3,16,28,.25),transparent)}.depth-milestone small{font-size:9px;letter-spacing:.22em;opacity:.42}.depth-milestone strong{display:block;margin:8px 0;font-size:clamp(26px,3vw,44px);letter-spacing:-.04em}.depth-milestone p{margin:0;font-size:12px;line-height:1.8;opacity:.55}.floor-ridge{position:absolute;left:-5%;right:-5%;bottom:-5%;height:28%;background:linear-gradient(#17171a,#050609);clip-path:polygon(0 60%,8% 52%,17% 68%,26% 38%,34% 65%,45% 48%,56% 72%,67% 41%,78% 65%,90% 43%,100% 66%,100% 100%,0 100%)}
+   @media(max-width:760px){.ocean-stats{display:none}.surface-birds{right:6%;top:15%;font-size:20px}.depth-milestone{width:78vw;padding:24px 15px}.trench-wall{width:24%}}
+  `}</style>
+  <div className="ocean-ui"><a className="ocean-brand" href="/">SWIPE EARTH <span>/ OCEAN</span></a><div className="ocean-zone"><small>{zone.jp}</small><strong>{zone.label}</strong></div><div className="ocean-stats"><span><small>TEMP</small>{temp}°C</span><span><small>PRESSURE</small>{pressure} atm</span></div><div className="depth-readout"><small>DEPTH</small><strong>{depth.toLocaleString()} m</strong></div></div>
+  <aside className="depth-rail" aria-hidden="true"><div className="rail-line"/><div className="rail-progress" style={{height:`${progress*100}%`}}/>{[0,200,1000,4000,6000,11000].map(v=><div className="rail-mark" key={v} style={{top:`${v/110}%`}}><span>{v.toLocaleString()}m</span></div>)}</aside>
+  <section className="surface-scene"><div className="sun-disc"/><div className="sun-ray ray-a"/><div className="sun-ray ray-b"/><div className="wave wave-a"/><div className="wave wave-b"/><div className="surface-birds">⌁　⌁</div><div className="surface-copy"><p>SWIPE EARTH: OCEAN</p><h1>海面から、<br/>地球の底へ。</h1><span>SCROLL / SWIPE TO DIVE</span><b>↓</b></div></section>
+  <div className="water-column"><div className="ambient ambient-school school-a" aria-hidden="true">{Array.from({length:13}).map((_,i)=><i key={i}/>)}</div><div className="ambient ambient-school school-b" aria-hidden="true">{Array.from({length:9}).map((_,i)=><i key={i}/>)}</div><div className="ambient jelly-field" aria-hidden="true">{Array.from({length:7}).map((_,i)=><i key={i}/>)}</div><div className="ambient bio-stars" aria-hidden="true">{Array.from({length:18}).map((_,i)=><i key={i}/>)}</div><div className="trench-wall wall-left"/><div className="trench-wall wall-right"/><div className="particles" aria-hidden="true">{Array.from({length:26}).map((_,i)=><i key={i}/>)}</div>{zones.map(z=><div className="zone-divider" key={z.label} style={{top:`${z.from/110}%`}}><span>{z.label}</span><small>{z.jp}</small></div>)}{milestones.map(m=><div className="depth-milestone" key={m.depth} style={{top:`${2+(m.depth/11000)*92}%`}}><small>{m.depth.toLocaleString()} m</small><strong>{m.title}</strong><p>{m.text}</p></div>)}{encounters.map((item,index)=><article className={`encounter-row ${index%2?'right':'left'} ${item.mystery?'mystery':''} ${item.scale==='giant'?'giant':''}`} key={item.depth} style={{top:`${3+(item.depth/11000)*92}%`}}><div className="encounter-depth">{item.depth.toLocaleString()} m</div><div className="creature-stage"><Creature type={item.type}/></div><div className="encounter-copy"><p>{item.mystery?'UNCONFIRMED / LEGEND':'ENCOUNTER'}</p><h2>{item.name}</h2><h3>{item.jp}</h3><div className="rule"/><div className="note">{item.note}</div></div></article>)}</div>
+  <section className="ocean-floor"><div className="floor-glow"/><div className="floor-ridge"/><p>10,900 m — CHALLENGER DEEP</p><h2>ここまで来ても、<br/>まだ未知は残っている。</h2><a href="/">EXPLORE ANOTHER WORLD →</a></section>
+ </main>
 }
