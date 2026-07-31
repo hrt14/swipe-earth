@@ -2,49 +2,113 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-const encounters=[
-{depth:15,name:'SEA TURTLE',jp:'アオウミガメ',type:'turtle',note:'まだ太陽の光が強い。海面近くでは、呼吸のために水面へ上がるウミガメに出会う。'},
-{depth:60,name:'MANTA RAY',jp:'オニイトマキエイ',type:'manta',note:'大きな翼のような胸びれで、青い水の中をゆっくり滑空する。'},
-{depth:120,name:'BLUE WHALE',jp:'シロナガスクジラ',type:'whale',note:'地球上で最大の動物。体長は30m近くに達することもある。',scale:'giant'},
-{depth:250,name:'GIANT SQUID',jp:'ダイオウイカ',type:'squid',note:'光が急速に弱くなる薄明帯。巨大な眼で、わずかな光を捉える。'},
-{depth:600,name:'ANGLERFISH',jp:'チョウチンアンコウ',type:'angler',note:'太陽光はほぼ届かない。自ら発する光が、この世界の目印になる。'},
-{depth:1000,name:'VAMPIRE SQUID',jp:'コウモリダコ',type:'vampire',note:'酸素の少ない暗黒の海に適応した、不思議な深海生物。'},
-{depth:2200,name:'GIANT ISOPOD',jp:'ダイオウグソクムシ',type:'isopod',note:'水圧は地上とは比較にならない。海底を歩く巨大な等脚類。'},
-{depth:4000,name:'HITOGATA',jp:'ヒトガタ',type:'hitogata',note:'南極海などで語られる白い人型の未確認存在。ここから先は、事実と伝承の境界が曖昧になる。',mystery:true},
-{depth:6000,name:'KRAKEN',jp:'クラーケン',type:'kraken',note:'巨大な触手で船を沈めると語られてきた伝説の怪物。もちろん、確認された生物ではない。',mystery:true,scale:'giant'},
-{depth:8200,name:'HADAL SHADOW',jp:'超深海の影',type:'shadow',note:'観測できる範囲は急激に狭くなる。暗闇の向こうに何がいるかは、まだ分からない。',mystery:true},
-{depth:10900,name:'THE UNKNOWN',jp:'未知',type:'unknown',note:'地球の最深部。人類はここまで来た。それでも、海のすべてを知ったわけではない。',mystery:true}
+const encounters = [
+  { depth: 15, name: 'SEA TURTLE', jp: 'アオウミガメ', type: 'turtle', note: 'まだ太陽の光が強い。海面近くでは、呼吸のために水面へ上がるウミガメに出会う。' },
+  { depth: 60, name: 'MANTA RAY', jp: 'オニイトマキエイ', type: 'manta', note: '大きな翼のような胸びれで、青い水の中をゆっくり滑空する。' },
+  { depth: 120, name: 'BLUE WHALE', jp: 'シロナガスクジラ', type: 'whale', note: '地球上で最大の動物。体長は30m近くに達することもある。', giant: true },
+  { depth: 250, name: 'GIANT SQUID', jp: 'ダイオウイカ', type: 'squid', note: '光が急速に弱くなる薄明帯。巨大な眼で、わずかな光を捉える。' },
+  { depth: 600, name: 'ANGLERFISH', jp: 'チョウチンアンコウ', type: 'angler', note: '太陽光はほぼ届かない。自ら発する光が、この世界の目印になる。' },
+  { depth: 1000, name: 'VAMPIRE SQUID', jp: 'コウモリダコ', type: 'vampire', note: '酸素の少ない暗黒の海に適応した、不思議な深海生物。' },
+  { depth: 2200, name: 'GIANT ISOPOD', jp: 'ダイオウグソクムシ', type: 'isopod', note: '水圧は地上とは比較にならない。海底を歩く巨大な等脚類。' },
+  { depth: 4000, name: 'HITOGATA', jp: 'ヒトガタ', type: 'hitogata', note: '南極海などで語られる白い人型の未確認存在。ここから先は、事実と伝承の境界が曖昧になる。', mystery: true },
+  { depth: 6000, name: 'KRAKEN', jp: 'クラーケン', type: 'kraken', note: '巨大な触手で船を沈めると語られてきた伝説の怪物。もちろん、確認された生物ではない。', mystery: true, giant: true },
+  { depth: 8200, name: 'HADAL SHADOW', jp: '超深海の影', type: 'shadow', note: '観測できる範囲は急激に狭くなる。暗闇の向こうに何がいるかは、まだ分からない。', mystery: true },
+  { depth: 10900, name: 'THE UNKNOWN', jp: '未知', type: 'unknown', note: '地球の最深部。人類はここまで来た。それでも、海のすべてを知ったわけではない。', mystery: true }
 ];
-const zones=[{from:0,to:200,label:'SUNLIGHT ZONE',jp:'表層'},{from:200,to:1000,label:'TWILIGHT ZONE',jp:'薄明帯'},{from:1000,to:4000,label:'MIDNIGHT ZONE',jp:'漸深海帯'},{from:4000,to:6000,label:'ABYSS',jp:'深海底帯'},{from:6000,to:11000,label:'HADAL ZONE',jp:'超深海帯'}];
-const milestones=[{depth:200,title:'SUNLIGHT ENDS',text:'ここから先、青以外の光はほとんど届かない。'},{depth:1000,title:'TOTAL DARKNESS',text:'太陽の光が消える。生き物自身の光が景色になる。'},{depth:4000,title:'400 ATM',text:'地上のおよそ400倍の圧力。人間はそのままでは存在できない。'},{depth:6000,title:'HADAL BEGINS',text:'海溝だけに存在する、地球でもっとも深い領域へ。'}];
-function getZone(d){return zones.find(z=>d>=z.from&&d<z.to)||zones[zones.length-1]}
-function Creature({type}){return <div className={`creature-art creature-${type}`} aria-hidden="true"><i/><b/><em/><span/><small/></div>}
 
-export default function Ocean(){
- const[depth,setDepth]=useState(0);const[progress,setProgress]=useState(0);
- useEffect(()=>{const onScroll=()=>{const max=document.documentElement.scrollHeight-window.innerHeight;const ratio=max>0?Math.min(1,Math.max(0,window.scrollY/max)):0;setProgress(ratio);setDepth(Math.round(ratio*11000))};onScroll();window.addEventListener('scroll',onScroll,{passive:true});return()=>window.removeEventListener('scroll',onScroll)},[]);
- const zone=useMemo(()=>getZone(depth),[depth]);
- const active=useMemo(()=>encounters.reduce((a,b)=>Math.abs(b.depth-depth)<Math.abs(a.depth-depth)?b:a,encounters[0]),[depth]);
- const temp=Math.max(1.2,24-depth/520).toFixed(1),pressure=Math.max(1,depth/10).toFixed(0);
- const mood=depth>=6000?'hadal':depth>=4000?'abyss':depth>=1000?'midnight':'light';
- return <main className={`ocean-experience mood-${mood}`}>
- <style jsx global>{`
- .water-column{height:36000px!important;min-height:36000px!important}.ocean-experience:after{content:'';position:fixed;z-index:30;inset:0;pointer-events:none;box-shadow:inset 0 0 120px rgba(0,7,13,.22);transition:box-shadow .8s,background .8s}.ocean-experience.mood-midnight:after{box-shadow:inset 0 0 180px rgba(0,0,0,.42)}.ocean-experience.mood-abyss:after{box-shadow:inset 0 0 220px rgba(0,0,0,.62);background:rgba(1,7,13,.05)}.ocean-experience.mood-hadal:after{box-shadow:inset 0 0 260px rgba(0,0,0,.75);background:rgba(6,2,9,.09)}
- .ocean-stats{display:flex;gap:18px;text-align:right}.ocean-stats span{font-size:10px;letter-spacing:.06em}.ocean-stats small{display:block;font-size:7px;letter-spacing:.18em;opacity:.45;margin-bottom:4px}.depth-readout{min-width:118px}.depth-readout strong{font-variant-numeric:tabular-nums}.depth-readout:after{content:'';display:block;height:2px;margin-top:8px;background:linear-gradient(90deg,rgba(117,233,255,.95) var(--p,0%),rgba(255,255,255,.12) var(--p,0%));border-radius:99px}
- .current-encounter{position:fixed;z-index:39;left:26px;bottom:24px;display:flex;align-items:center;gap:11px;padding:9px 13px;border:1px solid rgba(255,255,255,.11);border-radius:999px;background:rgba(0,10,18,.38);backdrop-filter:blur(12px);pointer-events:none}.current-encounter i{width:7px;height:7px;border-radius:50%;background:#a5f0ff;box-shadow:0 0 12px rgba(136,235,255,.8);animation:ping 1.8s infinite}.current-encounter small{display:block;font-size:7px;letter-spacing:.18em;opacity:.45}.current-encounter strong{font-size:10px;letter-spacing:.1em}@keyframes ping{50%{opacity:.25;transform:scale(.7)}}
- .encounter-row{opacity:.48;transition:opacity .7s,filter .7s,transform .7s}.encounter-row.active{opacity:1;filter:none}.encounter-row:not(.active){filter:saturate(.7)}.encounter-row.active .creature-stage:after{content:'';position:absolute;width:65%;height:50%;border-radius:50%;background:radial-gradient(ellipse,rgba(111,217,244,.11),transparent 68%);filter:blur(16px)}.encounter-row.mystery.active .creature-stage:after{background:radial-gradient(ellipse,rgba(222,226,244,.08),transparent 68%)}
- .surface-scene{isolation:isolate}.surface-scene:before{content:'';position:absolute;z-index:1;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.08),transparent 28% 72%,rgba(0,72,110,.08));mix-blend-mode:screen}.surface-copy{animation:introRise 1.1s ease-out both}@keyframes introRise{from{opacity:0;transform:translateY(20px)}}
- .surface-birds{position:absolute;top:11%;right:15%;font-size:28px;letter-spacing:.4em;color:rgba(255,255,255,.55);transform:rotate(-8deg)}.ambient{position:absolute;z-index:2;pointer-events:none}.ambient-school i{position:absolute;width:28px;height:10px;border-radius:70% 35% 35% 70%;background:rgba(198,232,238,.28)}.ambient-school i:after{content:'';position:absolute;right:-7px;top:1px;border-left:9px solid rgba(198,232,238,.25);border-top:4px solid transparent;border-bottom:4px solid transparent}.school-a{left:8%;top:5%;width:360px;height:260px}.school-b{right:8%;top:10%;width:280px;height:220px;transform:scale(.7);opacity:.45}.ambient-school i:nth-child(1){left:4%;top:40%}.ambient-school i:nth-child(2){left:18%;top:22%}.ambient-school i:nth-child(3){left:28%;top:58%}.ambient-school i:nth-child(4){left:40%;top:35%}.ambient-school i:nth-child(5){left:52%;top:15%}.ambient-school i:nth-child(6){left:63%;top:47%}.ambient-school i:nth-child(7){left:75%;top:28%}.ambient-school i:nth-child(8){left:84%;top:63%}.ambient-school i:nth-child(9){left:21%;top:78%}.ambient-school i:nth-child(10){left:49%;top:75%}.ambient-school i:nth-child(11){left:69%;top:83%}.ambient-school i:nth-child(12){left:87%;top:10%}.ambient-school i:nth-child(13){left:8%;top:7%}
- .jelly-field{left:4%;right:4%;top:7%;height:9%;opacity:.48}.jelly-field i{position:absolute;width:42px;height:30px;border-radius:55% 55% 35% 35%;border:1px solid rgba(164,227,245,.45);background:radial-gradient(circle at 50% 30%,rgba(185,240,250,.2),transparent 65%)}.jelly-field i:after{content:'〰 〰 〰';position:absolute;top:22px;left:2px;font-size:13px;color:rgba(168,224,242,.35);letter-spacing:-5px}.jelly-field i:nth-child(1){left:10%;top:16%}.jelly-field i:nth-child(2){left:29%;top:48%;transform:scale(.65)}.jelly-field i:nth-child(3){left:48%;top:8%;transform:scale(1.25)}.jelly-field i:nth-child(4){left:68%;top:62%;transform:scale(.8)}.jelly-field i:nth-child(5){left:84%;top:27%;transform:scale(.55)}.jelly-field i:nth-child(6){left:58%;top:78%;transform:scale(.5)}.jelly-field i:nth-child(7){left:18%;top:76%;transform:scale(.9)}
- .bio-stars{left:0;right:0;top:16%;height:33%;opacity:.6}.bio-stars i{position:absolute;width:4px;height:4px;border-radius:50%;background:#a4f2ea;box-shadow:0 0 13px 4px rgba(118,235,225,.3);animation:bioPulse 3s ease-in-out infinite}.bio-stars i:nth-child(3n){left:20%}.bio-stars i:nth-child(3n+1){left:52%}.bio-stars i:nth-child(3n+2){left:82%}.bio-stars i:nth-child(1){top:6%}.bio-stars i:nth-child(2){top:12%}.bio-stars i:nth-child(3){top:18%}.bio-stars i:nth-child(4){top:24%}.bio-stars i:nth-child(5){top:31%}.bio-stars i:nth-child(6){top:39%}.bio-stars i:nth-child(7){top:47%}.bio-stars i:nth-child(8){top:54%}.bio-stars i:nth-child(9){top:61%}.bio-stars i:nth-child(10){top:68%}.bio-stars i:nth-child(11){top:75%}.bio-stars i:nth-child(12){top:82%}.bio-stars i:nth-child(13){top:90%}@keyframes bioPulse{50%{opacity:.25;transform:scale(.45)}}
- .trench-wall{position:absolute;z-index:1;top:53%;bottom:0;width:17%;opacity:.62;background:linear-gradient(110deg,transparent 0 18%,rgba(0,0,0,.7) 19% 100%);clip-path:polygon(0 0,62% 4%,35% 12%,76% 21%,42% 35%,91% 48%,50% 61%,80% 73%,37% 86%,100% 100%,0 100%)}.wall-left{left:0}.wall-right{right:0;transform:scaleX(-1)}.depth-milestone{position:absolute;z-index:3;left:50%;width:min(560px,70vw);transform:translate(-50%,-50%);text-align:center;padding:36px 30px;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);background:linear-gradient(90deg,transparent,rgba(3,16,28,.25),transparent)}.depth-milestone small{font-size:9px;letter-spacing:.22em;opacity:.42}.depth-milestone strong{display:block;margin:8px 0;font-size:clamp(26px,3vw,44px);letter-spacing:-.04em}.depth-milestone p{margin:0;font-size:12px;line-height:1.8;opacity:.55}.floor-ridge{position:absolute;left:-5%;right:-5%;bottom:-5%;height:28%;background:linear-gradient(#17171a,#050609);clip-path:polygon(0 60%,8% 52%,17% 68%,26% 38%,34% 65%,45% 48%,56% 72%,67% 41%,78% 65%,90% 43%,100% 66%,100% 100%,0 100%)}
- @media(max-width:760px){.water-column{height:30000px!important;min-height:30000px!important}.ocean-stats{display:none}.current-encounter{left:14px;bottom:14px}.surface-birds{right:6%;top:15%;font-size:20px}.depth-milestone{width:78vw;padding:24px 15px}.trench-wall{width:24%}.encounter-row{opacity:.62}.encounter-row.active{opacity:1}}
- `}</style>
- <div className="ocean-ui"><a className="ocean-brand" href="/">SWIPE EARTH <span>/ OCEAN</span></a><div className="ocean-zone"><small>{zone.jp}</small><strong>{zone.label}</strong></div><div className="ocean-stats"><span><small>TEMP</small>{temp}°C</span><span><small>PRESSURE</small>{pressure} atm</span></div><div className="depth-readout" style={{'--p':`${progress*100}%`}}><small>DEPTH</small><strong>{depth.toLocaleString()} m</strong></div></div>
- <div className="current-encounter"><i/><div><small>NEAREST LIFE</small><strong>{active.name}</strong></div></div>
- <aside className="depth-rail" aria-hidden="true"><div className="rail-line"/><div className="rail-progress" style={{height:`${progress*100}%`}}/>{[0,200,1000,4000,6000,11000].map(v=><div className="rail-mark" key={v} style={{top:`${v/110}%`}}><span>{v.toLocaleString()}m</span></div>)}</aside>
- <section className="surface-scene"><div className="sun-disc"/><div className="sun-ray ray-a"/><div className="sun-ray ray-b"/><div className="wave wave-a"/><div className="wave wave-b"/><div className="surface-birds">⌁　⌁</div><div className="surface-copy"><p>SWIPE EARTH: OCEAN</p><h1>海面から、<br/>地球の底へ。</h1><span>SCROLL / SWIPE TO DIVE</span><b>↓</b></div></section>
- <div className="water-column"><div className="ambient ambient-school school-a">{Array.from({length:13}).map((_,i)=><i key={i}/>)}</div><div className="ambient ambient-school school-b">{Array.from({length:9}).map((_,i)=><i key={i}/>)}</div><div className="ambient jelly-field">{Array.from({length:7}).map((_,i)=><i key={i}/>)}</div><div className="ambient bio-stars">{Array.from({length:18}).map((_,i)=><i key={i}/>)}</div><div className="trench-wall wall-left"/><div className="trench-wall wall-right"/><div className="particles">{Array.from({length:26}).map((_,i)=><i key={i}/>)}</div>{zones.map(z=><div className="zone-divider" key={z.label} style={{top:`${z.from/110}%`}}><span>{z.label}</span><small>{z.jp}</small></div>)}{milestones.map(m=><div className="depth-milestone" key={m.depth} style={{top:`${2+(m.depth/11000)*92}%`}}><small>{m.depth.toLocaleString()} m</small><strong>{m.title}</strong><p>{m.text}</p></div>)}{encounters.map((item,index)=><article className={`encounter-row ${index%2?'right':'left'} ${item.mystery?'mystery':''} ${item.scale==='giant'?'giant':''} ${item.name===active.name?'active':''}`} key={item.depth} style={{top:`${3+(item.depth/11000)*92}%`}}><div className="encounter-depth">{item.depth.toLocaleString()} m</div><div className="creature-stage"><Creature type={item.type}/></div><div className="encounter-copy"><p>{item.mystery?'UNCONFIRMED / LEGEND':'ENCOUNTER'}</p><h2>{item.name}</h2><h3>{item.jp}</h3><div className="rule"/><div className="note">{item.note}</div></div></article>)}</div>
- <section className="ocean-floor"><div className="floor-glow"/><div className="floor-ridge"/><p>10,900 m — CHALLENGER DEEP</p><h2>ここまで来ても、<br/>まだ未知は残っている。</h2><a href="/">EXPLORE ANOTHER WORLD →</a></section>
- </main>
+const zones = [
+  { from: 0, to: 200, label: 'SUNLIGHT ZONE', jp: '表層' },
+  { from: 200, to: 1000, label: 'TWILIGHT ZONE', jp: '薄明帯' },
+  { from: 1000, to: 4000, label: 'MIDNIGHT ZONE', jp: '漸深海帯' },
+  { from: 4000, to: 6000, label: 'ABYSS', jp: '深海底帯' },
+  { from: 6000, to: 11000, label: 'HADAL ZONE', jp: '超深海帯' }
+];
+
+const sprite = {
+  turtle: ['real', '0% 0%', '300%'],
+  manta: ['real', '50% 0%', '300%'],
+  whale: ['real', '100% 0%', '300%'],
+  squid: ['real', '0% 60%', '300%'],
+  angler: ['real', '50% 58%', '300%'],
+  vampire: ['real', '100% 57%', '300%'],
+  isopod: ['real', '100% 100%', '300%'],
+  hitogata: ['legend', '0% 0%', '200%'],
+  kraken: ['legend', '100% 0%', '200%'],
+  shadow: ['legend', '0% 100%', '200%'],
+  unknown: ['legend', '100% 100%', '200%']
+};
+
+function getZone(depth) {
+  return zones.find((z) => depth >= z.from && depth < z.to) || zones[zones.length - 1];
+}
+
+function CreatureGraphic({ type }) {
+  const [sheet, position, size] = sprite[type];
+  return (
+    <div
+      className={`graphic-creature ${type}`}
+      style={{
+        backgroundImage: `url(/ocean/${sheet === 'real' ? 'creatures.webp' : 'legends.webp'})`,
+        backgroundPosition: position,
+        backgroundSize: size
+      }}
+      aria-hidden="true"
+    />
+  );
+}
+
+export default function Ocean() {
+  const [depth, setDepth] = useState(0);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      setProgress(ratio);
+      setDepth(Math.round(ratio * 11000));
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const zone = useMemo(() => getZone(depth), [depth]);
+  const active = useMemo(() => encounters.reduce((a, b) => Math.abs(b.depth - depth) < Math.abs(a.depth - depth) ? b : a, encounters[0]), [depth]);
+  const pressure = Math.max(1, depth / 10).toFixed(0);
+  const temp = Math.max(1.2, 24 - depth / 520).toFixed(1);
+
+  return (
+    <main className="graphic-ocean">
+      <style jsx global>{`
+        .graphic-ocean{min-height:100vh;background:#020914;color:#f4fbff;overflow:hidden}.graphic-ocean *{box-sizing:border-box}.ocean-hud{position:fixed;z-index:50;left:0;right:0;top:0;padding:18px 22px;display:grid;grid-template-columns:1fr auto auto;gap:22px;align-items:start;background:linear-gradient(rgba(0,7,14,.72),transparent);pointer-events:none}.ocean-hud a{pointer-events:auto;font-size:11px;letter-spacing:.18em;font-weight:700}.ocean-hud a span{opacity:.45;font-weight:400}.hud-zone,.hud-depth{text-align:right}.hud-zone small,.hud-depth small{display:block;font-size:7px;letter-spacing:.18em;opacity:.48}.hud-zone strong{font-size:10px;letter-spacing:.13em}.hud-depth strong{font-size:21px;font-variant-numeric:tabular-nums}.hud-progress{height:2px;margin-top:6px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden}.hud-progress i{display:block;height:100%;background:#8ceeff}.nearest{position:fixed;z-index:49;left:20px;bottom:18px;padding:9px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(0,8,15,.56);backdrop-filter:blur(12px)}.nearest small{display:block;font-size:7px;letter-spacing:.18em;opacity:.45}.nearest strong{font-size:10px;letter-spacing:.12em}.hero-ocean{height:100vh;min-height:650px;position:relative;display:grid;place-items:center;background-image:linear-gradient(rgba(1,18,33,.06),rgba(2,14,26,.25)),url('/ocean/ocean-depth.webp');background-size:cover;background-position:top center}.hero-ocean:after{content:'';position:absolute;inset:auto 0 0;height:22%;background:linear-gradient(transparent,#07182c)}.hero-copy{z-index:2;text-align:center;padding:20px;text-shadow:0 3px 28px rgba(0,25,55,.45)}.hero-copy p{font-size:10px;letter-spacing:.28em;font-weight:700}.hero-copy h1{margin:14px 0;font-size:clamp(58px,10vw,136px);line-height:.84;letter-spacing:-.07em}.hero-copy span{font-size:9px;letter-spacing:.2em}.hero-copy b{display:block;margin-top:12px;font-size:34px;animation:down 1.5s ease-in-out infinite}@keyframes down{50%{transform:translateY(9px)}}.ocean-journey{position:relative;height:33000px;background:#041526 url('/ocean/ocean-depth.webp') center top/100% 100% no-repeat}.ocean-journey:after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 0 16%,rgba(0,4,12,.12) 35%,rgba(0,2,8,.34) 65%,rgba(0,0,4,.5) 100%);pointer-events:none}.zone-mark{position:absolute;z-index:3;left:0;right:0;border-top:1px solid rgba(255,255,255,.15);padding:10px 7vw;display:flex;gap:12px;align-items:baseline}.zone-mark strong{font-size:9px;letter-spacing:.24em}.zone-mark small{font-size:9px;opacity:.45}.encounter-graphic{position:absolute;z-index:5;left:50%;width:min(1120px,calc(100% - 90px));transform:translate(-50%,-50%);display:grid;grid-template-columns:minmax(340px,1.25fr) minmax(280px,.8fr);gap:42px;align-items:center;opacity:.62;transition:opacity .5s}.encounter-graphic.right{grid-template-columns:minmax(280px,.8fr) minmax(340px,1.25fr)}.encounter-graphic.right .visual{order:2}.encounter-graphic.right .copy{text-align:right}.encounter-graphic.active{opacity:1}.visual{height:430px;display:grid;place-items:center;position:relative}.visual:after{content:'';position:absolute;width:72%;height:55%;border-radius:50%;background:radial-gradient(ellipse,rgba(110,225,255,.15),transparent 70%);filter:blur(18px)}.mystery .visual:after{background:radial-gradient(ellipse,rgba(180,210,255,.1),transparent 70%)}.graphic-creature{position:relative;z-index:2;width:100%;height:100%;background-repeat:no-repeat;filter:drop-shadow(0 22px 30px rgba(0,0,0,.5));transform:scale(.88);transition:transform .65s}.active .graphic-creature{transform:scale(1)}.whale,.kraken{transform:scale(1.02)}.active .whale,.active .kraken{transform:scale(1.13)}.copy{max-width:430px}.copy .depth{font-size:10px;letter-spacing:.18em;opacity:.45}.copy .kind{margin-top:22px;font-size:8px;letter-spacing:.24em;opacity:.55}.copy h2{margin:7px 0 0;font-size:clamp(38px,5vw,70px);line-height:.9;letter-spacing:-.055em}.copy h3{margin:9px 0;font-size:17px;font-weight:400;opacity:.66}.copy .line{width:36px;height:1px;background:rgba(255,255,255,.4);margin:18px 0}.right .copy .line{margin-left:auto}.copy .note{font-size:13px;line-height:1.9;opacity:.68}.mystery .copy h2{font-family:Georgia,serif;font-weight:500}.ocean-end{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#01040a url('/ocean/ocean-depth.webp') center bottom/cover no-repeat;padding:80px 22px;position:relative}.ocean-end:before{content:'';position:absolute;inset:0;background:rgba(0,3,8,.62)}.ocean-end>*{position:relative}.ocean-end p{font-size:9px;letter-spacing:.22em;opacity:.55}.ocean-end h2{font-size:clamp(44px,8vw,94px);line-height:.93;letter-spacing:-.055em;margin:12px 0 28px}.ocean-end a{border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:14px 20px;font-size:9px;letter-spacing:.15em}@media(max-width:760px){.ocean-hud{grid-template-columns:1fr auto;padding:14px}.hud-zone{display:none}.nearest{left:12px;bottom:12px}.ocean-journey{height:28000px;background-size:auto 100%;}.encounter-graphic,.encounter-graphic.right{width:calc(100% - 42px);grid-template-columns:1fr;gap:4px}.encounter-graphic.right .visual{order:initial}.encounter-graphic.right .copy{text-align:left}.visual{height:300px}.copy{padding-right:28px}.right .copy .line{margin-left:0}.copy h2{font-size:clamp(38px,11vw,58px)}.graphic-creature{transform:scale(.94)}.active .graphic-creature{transform:scale(1.04)}}
+      `}</style>
+
+      <div className="ocean-hud">
+        <a href="/">SWIPE EARTH <span>/ OCEAN</span></a>
+        <div className="hud-zone"><small>{zone.jp}</small><strong>{zone.label}</strong></div>
+        <div className="hud-depth"><small>{temp}°C · {pressure} ATM</small><strong>{depth.toLocaleString()} m</strong><div className="hud-progress"><i style={{ width: `${progress * 100}%` }} /></div></div>
+      </div>
+      <div className="nearest"><small>NEAREST LIFE</small><strong>{active.name}</strong></div>
+
+      <section className="hero-ocean">
+        <div className="hero-copy"><p>SWIPE EARTH: OCEAN</p><h1>海面から、<br/>地球の底へ。</h1><span>SWIPE / SCROLL TO DIVE</span><b>↓</b></div>
+      </section>
+
+      <section className="ocean-journey">
+        {zones.map((z) => <div key={z.label} className="zone-mark" style={{ top: `${(z.from / 11000) * 100}%` }}><strong>{z.label}</strong><small>{z.jp}</small></div>)}
+        {encounters.map((item, index) => {
+          const isActive = item.type === active.type;
+          return (
+            <article key={item.type} className={`encounter-graphic ${index % 2 ? 'right' : ''} ${item.mystery ? 'mystery' : ''} ${isActive ? 'active' : ''}`} style={{ top: `${2.5 + (item.depth / 11000) * 94}%` }}>
+              <div className="visual"><CreatureGraphic type={item.type} /></div>
+              <div className="copy"><div className="depth">{item.depth.toLocaleString()} m</div><div className="kind">{item.mystery ? 'UNCONFIRMED / LEGEND' : 'ENCOUNTER'}</div><h2>{item.name}</h2><h3>{item.jp}</h3><div className="line"/><div className="note">{item.note}</div></div>
+            </article>
+          );
+        })}
+      </section>
+
+      <section className="ocean-end"><p>10,900 m — CHALLENGER DEEP</p><h2>ここまで来ても、<br/>まだ未知は残っている。</h2><a href="/">EXPLORE ANOTHER WORLD →</a></section>
+    </main>
+  );
 }
