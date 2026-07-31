@@ -2,34 +2,84 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-const RAW='https://raw.githubusercontent.com/hrt14/swipe-earth/main/public/ocean';
-const encounters=[
-{depth:15,name:'SEA TURTLE',jp:'アオウミガメ',sheet:'real',pos:'0% 0%',size:'300% 200%',note:'まだ太陽の光が強い。海面近くでは、呼吸のために水面へ上がるウミガメに出会う。'},
-{depth:60,name:'MANTA RAY',jp:'オニイトマキエイ',sheet:'real',pos:'50% 0%',size:'300% 200%',note:'大きな翼のような胸びれで、青い水の中をゆっくり滑空する。'},
-{depth:120,name:'BLUE WHALE',jp:'シロナガスクジラ',sheet:'real',pos:'100% 0%',size:'300% 200%',note:'地球上で最大の動物。体長は30m近くに達することもある。'},
-{depth:250,name:'GIANT SQUID',jp:'ダイオウイカ',sheet:'real',pos:'0% 100%',size:'300% 200%',note:'光が急速に弱くなる薄明帯。巨大な眼で、わずかな光を捉える。'},
-{depth:600,name:'ANGLERFISH',jp:'チョウチンアンコウ',sheet:'real',pos:'50% 100%',size:'300% 200%',note:'太陽光はほぼ届かない。自ら発する光が、この世界の目印になる。'},
-{depth:1000,name:'VAMPIRE SQUID',jp:'コウモリダコ',sheet:'real',pos:'100% 100%',size:'300% 200%',note:'酸素の少ない暗黒の海に適応した、不思議な深海生物。'},
-{depth:2200,name:'GIANT ISOPOD',jp:'ダイオウグソクムシ',sheet:'real',pos:'100% 100%',size:'300% 200%',note:'水圧は地上とは比較にならない。海底を歩く巨大な等脚類。'},
-{depth:4000,name:'HITOGATA',jp:'ヒトガタ',sheet:'legend',pos:'0% 0%',size:'200% 200%',mystery:true,note:'南極海などで語られる白い人型の未確認存在。ここから先は、事実と伝承の境界が曖昧になる。'},
-{depth:6000,name:'KRAKEN',jp:'クラーケン',sheet:'legend',pos:'100% 0%',size:'200% 200%',mystery:true,note:'巨大な触手で船を沈めると語られてきた伝説の怪物。もちろん、確認された生物ではない。'},
-{depth:8200,name:'HADAL SHADOW',jp:'超深海の影',sheet:'legend',pos:'0% 100%',size:'200% 200%',mystery:true,note:'観測できる範囲は急激に狭くなる。暗闇の向こうに何がいるかは、まだ分からない。'},
-{depth:10900,name:'THE UNKNOWN',jp:'未知',sheet:'legend',pos:'100% 100%',size:'200% 200%',mystery:true,note:'地球の最深部。人類はここまで来た。それでも、海のすべてを知ったわけではない。'}
+const encounters = [
+  { depth: 15, name: 'SEA TURTLE', jp: 'アオウミガメ', type: 'turtle', note: 'まだ太陽の光が強い。海面近くでは、呼吸のために水面へ上がるウミガメに出会う。' },
+  { depth: 60, name: 'MANTA RAY', jp: 'オニイトマキエイ', type: 'manta', note: '大きな翼のような胸びれで、青い水の中をゆっくり滑空する。' },
+  { depth: 120, name: 'BLUE WHALE', jp: 'シロナガスクジラ', type: 'whale', giant: true, note: '地球上で最大の動物。体長は30m近くに達することもある。' },
+  { depth: 250, name: 'GIANT SQUID', jp: 'ダイオウイカ', type: 'squid', note: '光が急速に弱くなる薄明帯。巨大な眼で、わずかな光を捉える。' },
+  { depth: 600, name: 'ANGLERFISH', jp: 'チョウチンアンコウ', type: 'angler', note: '太陽光はほぼ届かない。自ら発する光が、この世界の目印になる。' },
+  { depth: 1000, name: 'VAMPIRE SQUID', jp: 'コウモリダコ', type: 'vampire', note: '酸素の少ない暗黒の海に適応した、不思議な深海生物。' },
+  { depth: 2200, name: 'GIANT ISOPOD', jp: 'ダイオウグソクムシ', type: 'isopod', note: '水圧は地上とは比較にならない。海底を歩く巨大な等脚類。' },
+  { depth: 4000, name: 'HITOGATA', jp: 'ヒトガタ', type: 'hitogata', mystery: true, note: '南極海などで語られる白い人型の未確認存在。ここから先は、事実と伝承の境界が曖昧になる。' },
+  { depth: 6000, name: 'KRAKEN', jp: 'クラーケン', type: 'kraken', mystery: true, giant: true, note: '巨大な触手で船を沈めると語られてきた伝説の怪物。もちろん、確認された生物ではない。' },
+  { depth: 8200, name: 'HADAL SHADOW', jp: '超深海の影', type: 'shadow', mystery: true, note: '観測できる範囲は急激に狭くなる。暗闇の向こうに何がいるかは、まだ分からない。' },
+  { depth: 10900, name: 'THE UNKNOWN', jp: '未知', type: 'unknown', mystery: true, note: '地球の最深部。人類はここまで来た。それでも、海のすべてを知ったわけではない。' }
 ];
-const zones=[{from:0,to:200,label:'SUNLIGHT ZONE',jp:'表層'},{from:200,to:1000,label:'TWILIGHT ZONE',jp:'薄明帯'},{from:1000,to:4000,label:'MIDNIGHT ZONE',jp:'漸深海帯'},{from:4000,to:6000,label:'ABYSS',jp:'深海底帯'},{from:6000,to:11000,label:'HADAL ZONE',jp:'超深海帯'}];
-function getZone(d){return zones.find(z=>d>=z.from&&d<z.to)||zones[zones.length-1]}
-function Creature({item}){const src=`${RAW}/${item.sheet==='real'?'creatures.webp':'legends.webp'}`;return <div className="sprite" style={{backgroundImage:`url(${src})`,backgroundPosition:item.pos,backgroundSize:item.size}}/>}
-export default function Ocean(){
- const[depth,setDepth]=useState(0);const[progress,setProgress]=useState(0);
- useEffect(()=>{const f=()=>{const max=document.documentElement.scrollHeight-window.innerHeight;const r=max>0?Math.min(1,Math.max(0,window.scrollY/max)):0;setProgress(r);setDepth(Math.round(r*11000))};f();window.addEventListener('scroll',f,{passive:true});return()=>window.removeEventListener('scroll',f)},[]);
- const zone=useMemo(()=>getZone(depth),[depth]);const active=useMemo(()=>encounters.reduce((a,b)=>Math.abs(b.depth-depth)<Math.abs(a.depth-depth)?b:a,encounters[0]),[depth]);const pressure=Math.max(1,depth/10).toFixed(0);const temp=Math.max(1.2,24-depth/520).toFixed(1);
- return <main className="ocean"><style jsx global>{`
- body{margin:0;background:#020914;color:white;font-family:Arial,Helvetica,sans-serif}.ocean{overflow:hidden;background:#020914}.hud{position:fixed;z-index:50;left:0;right:0;top:0;padding:16px 20px;display:grid;grid-template-columns:1fr auto auto;gap:18px;background:linear-gradient(rgba(0,5,12,.8),transparent);pointer-events:none}.hud a{pointer-events:auto;color:white;text-decoration:none;font-size:11px;letter-spacing:.16em;font-weight:700}.hud span{opacity:.45}.meta,.depth{text-align:right}.meta small,.depth small{display:block;font-size:7px;letter-spacing:.16em;opacity:.5}.meta strong{font-size:10px;letter-spacing:.12em}.depth strong{font-size:21px}.bar{height:2px;margin-top:6px;background:rgba(255,255,255,.12)}.bar i{display:block;height:100%;background:#8ceeff}.near{position:fixed;z-index:49;left:16px;bottom:16px;padding:9px 13px;border:1px solid rgba(255,255,255,.14);border-radius:999px;background:rgba(0,7,14,.58);backdrop-filter:blur(10px)}.near small{display:block;font-size:7px;letter-spacing:.16em;opacity:.45}.near strong{font-size:10px;letter-spacing:.1em}.hero{height:100vh;min-height:640px;position:relative;display:grid;place-items:center;overflow:hidden}.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.hero:after,.end:after{content:'';position:absolute;inset:0;background:linear-gradient(rgba(0,30,55,.03),rgba(0,5,15,.42))}.herocopy{position:relative;z-index:2;text-align:center;padding:20px;text-shadow:0 4px 28px rgba(0,20,45,.55)}.herocopy p{font-size:10px;letter-spacing:.28em;font-weight:700}.herocopy h1{margin:14px 0;font-size:clamp(58px,10vw,136px);line-height:.84;letter-spacing:-.07em}.herocopy span{font-size:9px;letter-spacing:.2em}.herocopy b{display:block;margin-top:12px;font-size:34px}.journey{position:relative;height:30000px;overflow:hidden;background:#031221}.journey>.bg{height:100%;object-fit:fill;opacity:.95}.journey:after{content:'';position:absolute;inset:0;background:linear-gradient(transparent,rgba(0,0,5,.12) 35%,rgba(0,0,5,.45));pointer-events:none}.zone{position:absolute;z-index:3;left:0;right:0;border-top:1px solid rgba(255,255,255,.14);padding:10px 7vw}.zone strong{font-size:9px;letter-spacing:.22em}.zone small{margin-left:12px;font-size:9px;opacity:.45}.enc{position:absolute;z-index:5;left:50%;width:min(1100px,calc(100% - 70px));transform:translate(-50%,-50%);display:grid;grid-template-columns:minmax(340px,1.2fr) minmax(280px,.8fr);gap:40px;align-items:center;opacity:.62;transition:.45s}.enc.right{grid-template-columns:minmax(280px,.8fr) minmax(340px,1.2fr)}.enc.right .visual{order:2}.enc.right .copy{text-align:right}.enc.active{opacity:1}.visual{height:430px;display:grid;place-items:center;position:relative}.visual:after{content:'';position:absolute;width:68%;height:52%;border-radius:50%;background:radial-gradient(ellipse,rgba(110,225,255,.13),transparent 70%);filter:blur(18px)}.sprite{position:relative;z-index:2;width:100%;height:100%;background-repeat:no-repeat;filter:drop-shadow(0 20px 30px rgba(0,0,0,.55));transform:scale(.9);transition:.45s}.active .sprite{transform:scale(1)}.copy{max-width:430px}.copy .d{font-size:10px;letter-spacing:.16em;opacity:.45}.copy .k{margin-top:20px;font-size:8px;letter-spacing:.22em;opacity:.56}.copy h2{margin:7px 0 0;font-size:clamp(38px,5vw,70px);line-height:.9;letter-spacing:-.055em}.copy h3{margin:9px 0;font-size:17px;font-weight:400;opacity:.66}.copy .line{width:36px;height:1px;background:rgba(255,255,255,.4);margin:18px 0}.right .copy .line{margin-left:auto}.copy .note{font-size:13px;line-height:1.9;opacity:.68}.mystery .copy h2{font-family:Georgia,serif;font-weight:500}.end{min-height:100vh;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 22px;overflow:hidden}.end>*:not(.bg){position:relative;z-index:2}.end p{font-size:9px;letter-spacing:.22em;opacity:.55}.end h2{font-size:clamp(44px,8vw,94px);line-height:.93;letter-spacing:-.055em;margin:12px 0 28px}.end a{color:white;text-decoration:none;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:14px 20px;font-size:9px;letter-spacing:.15em}@media(max-width:760px){.hud{grid-template-columns:1fr auto;padding:13px}.meta{display:none}.journey{height:25000px}.enc,.enc.right{width:calc(100% - 38px);grid-template-columns:1fr;gap:4px}.enc.right .visual{order:initial}.enc.right .copy{text-align:left}.visual{height:290px}.right .copy .line{margin-left:0}.copy h2{font-size:clamp(38px,11vw,58px)}.near{left:10px;bottom:10px}}
- `}</style>
- <div className="hud"><a href="/">SWIPE EARTH <span>/ OCEAN</span></a><div className="meta"><small>{zone.jp}</small><strong>{zone.label}</strong></div><div className="depth"><small>{temp}°C · {pressure} ATM</small><strong>{depth.toLocaleString()} m</strong><div className="bar"><i style={{width:`${progress*100}%`}}/></div></div></div>
- <div className="near"><small>NEAREST LIFE</small><strong>{active.name}</strong></div>
- <section className="hero"><img className="bg" src={`${RAW}/ocean-depth.webp`} alt=""/><div className="herocopy"><p>SWIPE EARTH: OCEAN</p><h1>海面から、<br/>地球の底へ。</h1><span>SWIPE / SCROLL TO DIVE</span><b>↓</b></div></section>
- <section className="journey"><img className="bg" src={`${RAW}/ocean-depth.webp`} alt=""/>{zones.map(z=><div className="zone" key={z.label} style={{top:`${(z.from/11000)*100}%`}}><strong>{z.label}</strong><small>{z.jp}</small></div>)}{encounters.map((item,i)=><article key={item.name} className={`enc ${i%2?'right':''} ${item.mystery?'mystery':''} ${active.name===item.name?'active':''}`} style={{top:`${2.5+(item.depth/11000)*94}%`}}><div className="visual"><Creature item={item}/></div><div className="copy"><div className="d">{item.depth.toLocaleString()} m</div><div className="k">{item.mystery?'UNCONFIRMED / LEGEND':'ENCOUNTER'}</div><h2>{item.name}</h2><h3>{item.jp}</h3><div className="line"/><div className="note">{item.note}</div></div></article>)}</section>
- <section className="end"><img className="bg" src={`${RAW}/ocean-depth.webp`} alt=""/><p>10,900 m — CHALLENGER DEEP</p><h2>ここまで来ても、<br/>まだ未知は残っている。</h2><a href="/">EXPLORE ANOTHER WORLD →</a></section>
- </main>
+
+const zones = [
+  { from: 0, to: 200, label: 'SUNLIGHT ZONE', jp: '表層' },
+  { from: 200, to: 1000, label: 'TWILIGHT ZONE', jp: '薄明帯' },
+  { from: 1000, to: 4000, label: 'MIDNIGHT ZONE', jp: '漸深海帯' },
+  { from: 4000, to: 6000, label: 'ABYSS', jp: '深海底帯' },
+  { from: 6000, to: 11000, label: 'HADAL ZONE', jp: '超深海帯' }
+];
+
+function getZone(depth) {
+  return zones.find((z) => depth >= z.from && depth < z.to) || zones[zones.length - 1];
+}
+
+export default function Ocean() {
+  const [depth, setDepth] = useState(0);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      setProgress(ratio);
+      setDepth(Math.round(ratio * 11000));
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const zone = useMemo(() => getZone(depth), [depth]);
+  const active = useMemo(() => encounters.reduce((a, b) => Math.abs(b.depth - depth) < Math.abs(a.depth - depth) ? b : a, encounters[0]), [depth]);
+  const pressure = Math.max(1, depth / 10).toFixed(0);
+  const temp = Math.max(1.2, 24 - depth / 520).toFixed(1);
+
+  return (
+    <main className="ocean-v2">
+      <style jsx global>{`
+        *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#020914;color:#f4fbff;font-family:Arial,Helvetica,sans-serif}.ocean-v2{overflow:hidden;background:#020914}.hud{position:fixed;z-index:50;left:0;right:0;top:0;padding:16px 20px;display:grid;grid-template-columns:1fr auto auto;gap:20px;background:linear-gradient(rgba(0,5,12,.82),transparent);pointer-events:none}.hud a{pointer-events:auto;color:#fff;text-decoration:none;font-size:11px;letter-spacing:.16em;font-weight:700}.hud a span{opacity:.45;font-weight:400}.meta,.readout{text-align:right}.meta small,.readout small{display:block;font-size:7px;letter-spacing:.16em;opacity:.5}.meta strong{font-size:10px;letter-spacing:.12em}.readout strong{font-size:21px;font-variant-numeric:tabular-nums}.bar{height:2px;margin-top:6px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:#8ceeff}.nearest{position:fixed;z-index:49;left:16px;bottom:16px;padding:9px 13px;border:1px solid rgba(255,255,255,.14);border-radius:999px;background:rgba(0,7,14,.58);backdrop-filter:blur(10px)}.nearest small{display:block;font-size:7px;letter-spacing:.16em;opacity:.45}.nearest strong{font-size:10px;letter-spacing:.1em}.hero{height:100vh;min-height:640px;position:relative;display:grid;place-items:center;overflow:hidden;background:#0879a8}.ocean-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center}.hero:after{content:'';position:absolute;inset:0;background:linear-gradient(rgba(0,30,55,.02),rgba(0,6,16,.38))}.hero-copy{position:relative;z-index:2;text-align:center;padding:20px;text-shadow:0 4px 30px rgba(0,20,45,.6)}.hero-copy p{font-size:10px;letter-spacing:.28em;font-weight:700}.hero-copy h1{margin:14px 0;font-size:clamp(58px,10vw,136px);line-height:.84;letter-spacing:-.07em}.hero-copy span{font-size:9px;letter-spacing:.2em}.hero-copy b{display:block;margin-top:12px;font-size:34px;animation:dive 1.4s ease-in-out infinite}@keyframes dive{50%{transform:translateY(9px)}}.journey{position:relative;height:26000px;overflow:hidden;background:#031221}.journey>.ocean-bg{height:100%;object-fit:fill;opacity:.93}.journey:after{content:'';position:absolute;inset:0;background:linear-gradient(transparent 0 15%,rgba(0,1,7,.12) 38%,rgba(0,0,4,.5) 100%);pointer-events:none}.zone{position:absolute;z-index:3;left:0;right:0;border-top:1px solid rgba(255,255,255,.14);padding:10px 7vw}.zone strong{font-size:9px;letter-spacing:.22em}.zone small{margin-left:12px;font-size:9px;opacity:.45}.encounter{position:absolute;z-index:5;left:50%;width:min(1120px,calc(100% - 80px));transform:translate(-50%,-50%);display:grid;grid-template-columns:minmax(360px,1.25fr) minmax(280px,.8fr);gap:44px;align-items:center;opacity:.58;transition:opacity .55s}.encounter.right{grid-template-columns:minmax(280px,.8fr) minmax(360px,1.25fr)}.encounter.right .visual{order:2}.encounter.right .copy{text-align:right}.encounter.active{opacity:1}.visual{height:430px;display:grid;place-items:center;position:relative}.visual:after{content:'';position:absolute;width:75%;height:58%;border-radius:50%;background:radial-gradient(ellipse,rgba(101,224,255,.16),transparent 70%);filter:blur(18px)}.mystery .visual:after{background:radial-gradient(ellipse,rgba(171,206,255,.11),transparent 70%)}.creature-img{position:relative;z-index:2;display:block;width:min(100%,760px);height:100%;object-fit:contain;filter:drop-shadow(0 24px 34px rgba(0,0,0,.58));transform:scale(.9);transition:transform .55s}.encounter.active .creature-img{transform:scale(1)}.encounter.giant .creature-img{transform:scale(1.02)}.encounter.giant.active .creature-img{transform:scale(1.12)}.copy{max-width:430px}.copy .d{font-size:10px;letter-spacing:.16em;opacity:.45}.copy .k{margin-top:20px;font-size:8px;letter-spacing:.22em;opacity:.56}.copy h2{margin:7px 0 0;font-size:clamp(38px,5vw,70px);line-height:.9;letter-spacing:-.055em}.copy h3{margin:9px 0;font-size:17px;font-weight:400;opacity:.66}.copy .line{width:36px;height:1px;background:rgba(255,255,255,.4);margin:18px 0}.right .copy .line{margin-left:auto}.copy .note{font-size:13px;line-height:1.9;opacity:.68}.mystery .copy h2{font-family:Georgia,'Times New Roman',serif;font-weight:500}.end{min-height:100vh;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 22px;overflow:hidden;background:#01040a}.end:after{content:'';position:absolute;inset:0;background:rgba(0,2,8,.62)}.end>*:not(.ocean-bg){position:relative;z-index:2}.end p{font-size:9px;letter-spacing:.22em;opacity:.55}.end h2{font-size:clamp(44px,8vw,94px);line-height:.93;letter-spacing:-.055em;margin:12px 0 28px}.end a{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:14px 20px;font-size:9px;letter-spacing:.15em}@media(max-width:760px){.hud{grid-template-columns:1fr auto;padding:13px}.meta{display:none}.nearest{left:10px;bottom:10px}.journey{height:22000px}.encounter,.encounter.right{width:calc(100% - 38px);grid-template-columns:1fr;gap:4px}.encounter.right .visual{order:initial}.encounter.right .copy{text-align:left}.visual{height:300px}.right .copy .line{margin-left:0}.copy h2{font-size:clamp(38px,11vw,58px)}.copy{padding-right:24px}}
+      `}</style>
+
+      <div className="hud">
+        <a href="/">SWIPE EARTH <span>/ OCEAN</span></a>
+        <div className="meta"><small>{zone.jp}</small><strong>{zone.label}</strong></div>
+        <div className="readout"><small>{temp}°C · {pressure} ATM</small><strong>{depth.toLocaleString()} m</strong><div className="bar"><i style={{width:`${progress*100}%`}} /></div></div>
+      </div>
+      <div className="nearest"><small>NEAREST LIFE</small><strong>{active.name}</strong></div>
+
+      <section className="hero">
+        <img className="ocean-bg" src="/ocean/ocean-depth.webp" alt="海面から深海へ続く海" />
+        <div className="hero-copy"><p>SWIPE EARTH: OCEAN</p><h1>海面から、<br/>地球の底へ。</h1><span>SWIPE / SCROLL TO DIVE</span><b>↓</b></div>
+      </section>
+
+      <section className="journey">
+        <img className="ocean-bg" src="/ocean/ocean-depth.webp" alt="" />
+        {zones.map(z => <div className="zone" key={z.label} style={{top:`${(z.from/11000)*100}%`}}><strong>{z.label}</strong><small>{z.jp}</small></div>)}
+        {encounters.map((item,index) => <article key={item.type} className={`encounter ${index%2?'right':''} ${item.mystery?'mystery':''} ${item.giant?'giant':''} ${active.type===item.type?'active':''}`} style={{top:`${2.8+(item.depth/11000)*94}%`}}>
+          <div className="visual"><img className="creature-img" src={`/ocean/creatures/${item.type}.svg`} alt={item.jp} /></div>
+          <div className="copy"><div className="d">{item.depth.toLocaleString()} m</div><div className="k">{item.mystery?'UNCONFIRMED / LEGEND':'ENCOUNTER'}</div><h2>{item.name}</h2><h3>{item.jp}</h3><div className="line"/><div className="note">{item.note}</div></div>
+        </article>)}
+      </section>
+
+      <section className="end">
+        <img className="ocean-bg" src="/ocean/ocean-depth.webp" alt="" />
+        <p>10,900 m — CHALLENGER DEEP</p><h2>ここまで来ても、<br/>まだ未知は残っている。</h2><a href="/">EXPLORE ANOTHER WORLD →</a>
+      </section>
+    </main>
+  );
 }
