@@ -6,14 +6,14 @@ const encounters = [
   { depth: 15, name: 'SEA TURTLE', jp: 'アオウミガメ', image: 'turtle-art.svg', note: 'まだ太陽の光が強い。海面近くでは、呼吸のために水面へ上がるウミガメに出会う。', bg: 4 },
   { depth: 60, name: 'MANTA RAY', jp: 'オニイトマキエイ', image: 'manta-art.svg', note: '大きな翼のような胸びれで、青い水の中をゆっくり滑空する。', bg: 10 },
   { depth: 120, name: 'BLUE WHALE', jp: 'シロナガスクジラ', image: 'whale-art.svg', giant: true, note: '地球上で最大の動物。体長は30m近くに達することもある。', bg: 18 },
-  { depth: 250, name: 'GIANT SQUID', jp: 'ダイオウイカ', image: 'squid-graphic.svg', note: '光が急速に弱くなる薄明帯。巨大な眼で、わずかな光を捉える。', bg: 28 },
-  { depth: 600, name: 'ANGLERFISH', jp: 'チョウチンアンコウ', image: 'angler-graphic.svg', note: '太陽光はほぼ届かない。自ら発する光が、この世界の目印になる。', bg: 40 },
-  { depth: 1000, name: 'VAMPIRE SQUID', jp: 'コウモリダコ', image: 'vampire-graphic.svg', note: '酸素の少ない暗黒の海に適応した、不思議な深海生物。', bg: 50 },
-  { depth: 2200, name: 'GIANT ISOPOD', jp: 'ダイオウグソクムシ', image: 'isopod-graphic.svg', note: '水圧は地上とは比較にならない。海底を歩く巨大な等脚類。', bg: 61 },
-  { depth: 4000, name: 'HITOGATA', jp: 'ヒトガタ', image: 'hitogata-graphic.svg', mystery: true, note: '南極海などで語られる白い人型の未確認存在。ここから先は、事実と伝承の境界が曖昧になる。', bg: 72 },
-  { depth: 6000, name: 'KRAKEN', jp: 'クラーケン', image: 'kraken-graphic.svg', mystery: true, giant: true, note: '巨大な触手で船を沈めると語られてきた伝説の怪物。もちろん、確認された生物ではない。', bg: 82 },
-  { depth: 8200, name: 'HADAL SHADOW', jp: '超深海の影', image: 'shadow-graphic.svg', mystery: true, note: '観測できる範囲は急激に狭くなる。暗闇の向こうに何がいるかは、まだ分からない。', bg: 91 },
-  { depth: 10900, name: 'THE UNKNOWN', jp: '未知', image: 'unknown-graphic.svg', mystery: true, note: '地球の最深部。人類はここまで来た。それでも、海のすべてを知ったわけではない。', bg: 100 }
+  { depth: 250, name: 'GIANT SQUID', jp: 'ダイオウイカ', image: 'giant-squid-art.svg', note: '光が急速に弱くなる薄明帯。巨大な眼で、わずかな光を捉える。', bg: 28 },
+  { depth: 600, name: 'ANGLERFISH', jp: 'チョウチンアンコウ', image: 'anglerfish-art.svg', note: '太陽光はほぼ届かない。自ら発する光が、この世界の目印になる。', bg: 40 },
+  { depth: 1000, name: 'VAMPIRE SQUID', jp: 'コウモリダコ', image: 'vampire-squid-art.svg', note: '酸素の少ない暗黒の海に適応した、不思議な深海生物。', bg: 50 },
+  { depth: 2200, name: 'GIANT ISOPOD', jp: 'ダイオウグソクムシ', image: 'isopod-art.svg', note: '水圧は地上とは比較にならない。海底を歩く巨大な等脚類。', bg: 61 },
+  { depth: 4000, name: 'HITOGATA', jp: 'ヒトガタ', image: 'hitogata-art.svg', mystery: true, note: '南極海などで語られる白い人型の未確認存在。ここから先は、事実と伝承の境界が曖昧になる。', bg: 72 },
+  { depth: 6000, name: 'KRAKEN', jp: 'クラーケン', image: 'kraken-art.svg', mystery: true, giant: true, note: '巨大な触手で船を沈めると語られてきた伝説の怪物。もちろん、確認された生物ではない。', bg: 82 },
+  { depth: 8200, name: 'HADAL SHADOW', jp: '超深海の影', image: 'hadal-shadow-art.svg', mystery: true, note: '観測できる範囲は急激に狭くなる。暗闇の向こうに何がいるかは、まだ分からない。', bg: 91 },
+  { depth: 10900, name: 'THE UNKNOWN', jp: '未知', image: 'unknown-art.svg', mystery: true, note: '地球の最深部。人類はここまで来た。それでも、海のすべてを知ったわけではない。', bg: 100 }
 ];
 
 const zones = [
