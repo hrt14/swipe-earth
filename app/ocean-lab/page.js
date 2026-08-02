@@ -1,71 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import sceneData from '../../data/ocean/midnight-scene.json';
 
-const species = {
-  barreleye: {
-    name: 'BARRELEYE',
-    jp: 'デメニギス',
-    depth: 'MIDWATER',
-    image: '/ocean/creatures/production/barreleye.svg',
-    note: '透明な頭部の内側に筒状の眼を持つ深海魚。上方のわずかな光や影を探しながら漂う。',
-    tag: 'REAL SPECIES'
-  },
-  anglerfish: {
-    name: 'ANGLERFISH',
-    jp: 'チョウチンアンコウの仲間',
-    depth: 'DEEP WATER',
-    image: '/ocean/creatures/production/anglerfish.svg',
-    note: '発光器を持つ深海魚の仲間。暗闇の中で小さな光が強い存在感を放つ。',
-    tag: 'REAL SPECIES'
-  },
-  vampireSquid: {
-    name: 'VAMPIRE SQUID',
-    jp: 'コウモリダコ',
-    depth: 'LOW OXYGEN LAYER',
-    image: '/ocean/creatures/production/vampire-squid.svg',
-    note: '酸素の少ない中深層に適応した頭足類。腕の間に広がる膜が独特のシルエットを作る。',
-    tag: 'REAL SPECIES'
-  },
-  gulperEel: {
-    name: 'GULPER EEL',
-    jp: 'フクロウナギ',
-    depth: 'BATHYPELAGIC',
-    image: '/ocean/creatures/production/gulper-eel.svg',
-    note: '大きく開く口と細長い尾を持つ深海魚。尾の先端には淡い光が浮かぶ。',
-    tag: 'REAL SPECIES'
-  },
-  jellyfish: {
-    name: 'DEEP-SEA JELLY',
-    jp: '深海クラゲ',
-    depth: 'DRIFTING LAYER',
-    image: '/ocean/creatures/production/jellyfish.svg',
-    note: '半透明の傘と細い触手を揺らし、水の流れに乗って静かに移動する。',
-    tag: 'REAL SPECIES'
-  },
-  giantSquid: {
-    name: 'GIANT SQUID',
-    jp: 'ダイオウイカ',
-    depth: 'DISTANT ENCOUNTER',
-    image: '/ocean/creatures/production/giant-squid-shadow.svg',
-    note: '遠景を横切る巨大な影。近くで見せず、海の広さと未知の存在感を伝える。',
-    tag: 'LARGE ENCOUNTER'
-  }
-};
-
-const creatures = [
-  { id: 'jelly-a', species: 'jellyfish', x: 17, y: 16, size: 12, layer: 'far', delay: -2.1, duration: 11.4 },
-  { id: 'jelly-b', species: 'jellyfish', x: 82, y: 27, size: 9, layer: 'far', delay: -6.1, duration: 13.2, flip: true },
-  { id: 'barreleye-a', species: 'barreleye', x: 24, y: 32, size: 17, layer: 'mid', delay: -1.2, duration: 8.2 },
-  { id: 'barreleye-b', species: 'barreleye', x: 76, y: 18, size: 12, layer: 'far', delay: -3.4, duration: 9.4, flip: true },
-  { id: 'barreleye-c', species: 'barreleye', x: 73, y: 48, size: 14, layer: 'mid', delay: -5.1, duration: 7.7 },
-  { id: 'angler-a', species: 'anglerfish', x: 16, y: 59, size: 24, layer: 'mid', delay: -2.1, duration: 8.7 },
-  { id: 'angler-b', species: 'anglerfish', x: 72, y: 69, size: 20, layer: 'near', delay: -4.6, duration: 7.1, flip: true },
-  { id: 'vampire-a', species: 'vampireSquid', x: 49, y: 41, size: 25, layer: 'near', delay: -2.8, duration: 8.1 },
-  { id: 'vampire-b', species: 'vampireSquid', x: 31, y: 77, size: 17, layer: 'mid', delay: -6.2, duration: 9.7, flip: true },
-  { id: 'gulper-a', species: 'gulperEel', x: 59, y: 82, size: 29, layer: 'mid', delay: -3.8, duration: 9.4 },
-  { id: 'giant-squid-a', species: 'giantSquid', x: 8, y: 7, size: 92, layer: 'silhouette', delay: -8, duration: 22, flip: true }
-];
+const { zone, species, instances } = sceneData;
 
 function SafeImage({ src, className = '', alt = '' }) {
   const [failed, setFailed] = useState(false);
@@ -101,15 +39,15 @@ export default function OceanLab() {
 
   return (
     <main className="lab-shell">
-      <section className="phone-stage" aria-label="SWIPE EARTH OCEAN MIDNIGHT ZONE">
-        <SafeImage className="depth-background" src="/ocean/backgrounds/midnight-production.svg" />
+      <section className="phone-stage" aria-label={`SWIPE EARTH OCEAN ${zone.nameEn}`}>
+        <SafeImage className="depth-background" src={zone.background} />
         <SafeImage className="particle-layer particles-a" src="/ocean/ocean-particles.svg" />
         <SafeImage className="particle-layer particles-b" src="/ocean/ocean-particles.svg" />
         <div className="vignette" />
 
         <header className="top-hud">
           <a href="/ocean" className="brand">SWIPE EARTH <span>/ OCEAN</span></a>
-          <div className="depth-readout"><small>DEPTH</small><strong>1,450m</strong><span>MIDNIGHT ZONE</span></div>
+          <div className="depth-readout"><small>DEPTH</small><strong>{zone.depthDisplay}</strong><span>{zone.nameEn}</span></div>
         </header>
 
         <aside className="depth-scale" aria-hidden="true">
@@ -124,7 +62,7 @@ export default function OceanLab() {
         </div>
 
         <div className="creature-field">
-          {creatures.map((item) => <Creature key={item.id} item={item} selected={item.species === selectedId} onSelect={setSelectedId} />)}
+          {instances.map((item) => <Creature key={item.id} item={item} selected={item.species === selectedId} onSelect={setSelectedId} />)}
         </div>
 
         <div className={`tap-guide ${selected ? 'is-hidden' : ''}`} aria-hidden="true"><span /> TAP A CREATURE</div>
