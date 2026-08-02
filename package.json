@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "node scripts/dev.mjs",
+    "validate:ocean": "node scripts/validate-ocean-scene.mjs",
+    "prebuild": "npm run validate:ocean",
     "build": "next build",
     "start": "next start"
   },
