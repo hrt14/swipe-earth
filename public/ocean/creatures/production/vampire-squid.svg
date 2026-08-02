@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720" width="720" height="720">
+  <defs>
+    <radialGradient id="mantle" cx="0.4" cy="0.2" r="0.9">
+      <stop offset="0" stop-color="#d14a67"/>
+      <stop offset="0.35" stop-color="#7b243f"/>
+      <stop offset="0.72" stop-color="#31162f"/>
+      <stop offset="1" stop-color="#0c0917"/>
+    </radialGradient>
+    <linearGradient id="web" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a53250" stop-opacity="0.95"/>
+      <stop offset="0.5" stop-color="#4d173b" stop-opacity="0.82"/>
+      <stop offset="1" stop-color="#130a22" stop-opacity="0.18"/>
+    </linearGradient>
+    <linearGradient id="arm" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7e2144"/>
+      <stop offset="1" stop-color="#140a23"/>
+    </linearGradient>
+    <radialGradient id="eye"><stop offset="0" stop-color="#ffffff"/><stop offset="0.22" stop-color="#c8edff"/><stop offset="0.5" stop-color="#4f8eff"/><stop offset="1" stop-color="#10193e"/></radialGradient>
+    <filter id="glow" x="-120%" y="-120%" width="340%" height="340%"><feGaussianBlur stdDeviation="9"/></filter>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="10"/></filter>
+    <pattern id="photophores" width="38" height="34" patternUnits="userSpaceOnUse"><circle cx="9" cy="11" r="2.2" fill="#f6a4b9" opacity="0.38"/><circle cx="29" cy="25" r="1.6" fill="#9bc8ff" opacity="0.32"/></pattern>
+  </defs>
+  <ellipse cx="360" cy="548" rx="230" ry="86" fill="#00040b" opacity="0.42" filter="url(#shadow)"/>
+  <path d="M260 280c-91 85-136 188-134 309 67-52 121-96 161-132 10 64 35 124 75 180 29-73 41-136 35-188 43 54 98 98 164 133 0-127-46-229-139-306z" fill="url(#web)" stroke="#b64e69" stroke-opacity="0.28" stroke-width="5"/>
+  <path d="M244 290c40 53 72 106 96 160 25-58 56-111 94-159" fill="none" stroke="#d5687f" stroke-opacity="0.22" stroke-width="5"/>
+  <path d="M145 588c50-85 91-151 124-197" fill="none" stroke="url(#arm)" stroke-width="24" stroke-linecap="round"/>
+  <path d="M576 583c-58-82-101-146-130-191" fill="none" stroke="url(#arm)" stroke-width="24" stroke-linecap="round"/>
+  <path d="M287 461c-10 71-34 136-73 194" fill="none" stroke="url(#arm)" stroke-width="20" stroke-linecap="round"/>
+  <path d="M432 456c14 73 42 137 83 190" fill="none" stroke="url(#arm)" stroke-width="20" stroke-linecap="round"/>
+  <path d="M317 432c-3 83-17 159-42 226" fill="none" stroke="url(#arm)" stroke-width="17" stroke-linecap="round"/>
+  <path d="M404 430c7 86 23 160 49 223" fill="none" stroke="url(#arm)" stroke-width="17" stroke-linecap="round"/>
+  <path d="M257 140c24-91 83-130 136-121 68 12 114 82 98 175-17 101-67 176-131 179-66 3-125-77-135-169-3-26 8-47 32-64z" fill="url(#mantle)"/>
+  <path d="M278 119c31-48 76-70 117-60 45 11 74 57 72 112-51-36-108-54-170-50z" fill="#e87487" opacity="0.18"/>
+  <path d="M248 199c44-30 95-45 153-43 34 2 65 8 92 20-11 84-58 144-128 150-67 6-110-45-117-127z" fill="url(#photophores)" opacity="0.5"/>
+  <ellipse cx="316" cy="217" rx="35" ry="43" fill="#090914"/>
+  <ellipse cx="316" cy="211" rx="20" ry="26" fill="url(#eye)"/>
+  <circle cx="311" cy="202" r="6" fill="#fff"/>
+  <ellipse cx="405" cy="217" rx="35" ry="43" fill="#090914"/>
+  <ellipse cx="405" cy="211" rx="20" ry="26" fill="url(#eye)"/>
+  <circle cx="400" cy="202" r="6" fill="#fff"/>
+  <g opacity="0.34" filter="url(#glow)"><ellipse cx="316" cy="211" rx="25" ry="31" fill="#6eb7ff"/><ellipse cx="405" cy="211" rx="25" ry="31" fill="#6eb7ff"/></g>
+  <path d="M332 275c19 13 39 13 59 0" fill="none" stroke="#e69aab" stroke-opacity="0.45" stroke-width="5" stroke-linecap="round"/>
+  <path d="M266 332c-41-21-77-51-106-91 53 6 94 23 123 50z" fill="#71203f" opacity="0.8"/>
+  <path d="M456 329c43-19 80-48 111-86-53 3-94 19-125 46z" fill="#71203f" opacity="0.8"/>
+</svg>
