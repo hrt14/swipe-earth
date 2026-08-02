@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1400" role="img" aria-label="海中の泡と粒子">
+  <defs><radialGradient id="b"><stop stop-color="#fff" stop-opacity=".9"/><stop offset=".35" stop-color="#a9efff" stop-opacity=".28"/><stop offset="1" stop-color="#58c7e9" stop-opacity="0"/></radialGradient></defs>
+  <g fill="#c7f8ff" opacity=".4"><circle cx="94" cy="130" r="3"/><circle cx="210" cy="310" r="2"/><circle cx="756" cy="210" r="3"/><circle cx="635" cy="480" r="2"/><circle cx="120" cy="710" r="2"/><circle cx="808" cy="850" r="3"/><circle cx="530" cy="1030" r="2"/><circle cx="250" cy="1190" r="3"/><circle cx="690" cy="1300" r="2"/></g>
+  <g fill="url(#b)" opacity=".6"><circle cx="165" cy="230" r="26"/><circle cx="720" cy="390" r="15"/><circle cx="585" cy="780" r="21"/><circle cx="290" cy="980" r="13"/><circle cx="780" cy="1160" r="18"/></g>
+</svg>
