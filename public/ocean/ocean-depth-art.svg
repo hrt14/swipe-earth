@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1800" role="img" aria-label="海面から超深海へ続く海の断面">
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#35d7f2"/>
+      <stop offset=".12" stop-color="#0ca5d0"/>
+      <stop offset=".3" stop-color="#075f9f"/>
+      <stop offset=".5" stop-color="#073a72"/>
+      <stop offset=".72" stop-color="#041d46"/>
+      <stop offset="1" stop-color="#010511"/>
+    </linearGradient>
+    <linearGradient id="wallL" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#0a4a7a"/><stop offset=".45" stop-color="#082e55"/><stop offset="1" stop-color="#010713"/>
+    </linearGradient>
+    <linearGradient id="wallR" x1="1" y1="0" x2="0" y2="1">
+      <stop stop-color="#0d5d88"/><stop offset=".5" stop-color="#092f52"/><stop offset="1" stop-color="#010713"/>
+    </linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#d8fbff" stop-opacity=".6"/><stop offset="1" stop-color="#82e8ff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="glow">
+      <stop stop-color="#6cecff" stop-opacity=".7"/><stop offset="1" stop-color="#0ec8ff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="18"/></filter>
+  </defs>
+  <rect width="900" height="1800" fill="url(#sea)"/>
+  <path d="M0 0H900V34C760 14 640 22 530 52C350 100 190 90 0 44Z" fill="#d9fbff" opacity=".35"/>
+  <path d="M80 0L310 720L430 720L220 0Z" fill="url(#beam)" opacity=".42"/>
+  <path d="M310 0L485 610L570 610L470 0Z" fill="url(#beam)" opacity=".24"/>
+  <path d="M615 0L680 560L770 560L770 0Z" fill="url(#beam)" opacity=".2"/>
+  <g opacity=".55" fill="#c6f8ff">
+    <circle cx="110" cy="180" r="3"/><circle cx="240" cy="320" r="2"/><circle cx="690" cy="250" r="3"/><circle cx="520" cy="480" r="2"/>
+    <circle cx="170" cy="710" r="2"/><circle cx="760" cy="820" r="3"/><circle cx="610" cy="980" r="2"/><circle cx="300" cy="1130" r="3"/>
+  </g>
+  <g opacity=".23" stroke="#b8f4ff" fill="none" stroke-width="3">
+    <path d="M120 470c25-24 53-26 84-4c-34 14-61 16-84 4Z"/><path d="M202 466l28-18v34Z"/>
+    <path d="M640 620c24-18 49-18 76 0c-28 12-53 12-76 0Z"/><path d="M641 620l-26-15v30Z"/>
+    <path d="M290 780c17-14 34-14 52 0c-18 9-35 9-52 0Z"/><path d="M291 780l-19-11v22Z"/>
+  </g>
+  <ellipse cx="655" cy="930" rx="90" ry="48" fill="url(#glow)" opacity=".18" filter="url(#blur)"/>
+  <path d="M0 820C126 760 215 794 286 920C330 998 342 1102 322 1230C302 1360 226 1510 0 1610Z" fill="url(#wallL)"/>
+  <path d="M900 760C752 748 650 830 606 964C568 1084 586 1235 638 1360C688 1480 772 1594 900 1658Z" fill="url(#wallR)"/>
+  <path d="M0 1070C130 1030 230 1094 260 1222C286 1334 236 1470 122 1602L0 1680Z" fill="#03142f" opacity=".9"/>
+  <path d="M900 1020C778 1010 692 1080 664 1196C630 1334 685 1490 792 1620L900 1702Z" fill="#03142f" opacity=".92"/>
+  <path d="M0 1580C170 1506 302 1540 402 1665C500 1540 642 1510 900 1610V1800H0Z" fill="#01040b"/>
+  <ellipse cx="452" cy="1725" rx="190" ry="64" fill="#0f7fa6" opacity=".18" filter="url(#blur)"/>
+  <g opacity=".4" fill="#83efff">
+    <circle cx="442" cy="1690" r="3"/><circle cx="476" cy="1715" r="2"/><circle cx="420" cy="1740" r="2"/><circle cx="508" cy="1760" r="3"/>
+  </g>
+</svg>
