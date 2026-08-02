@@ -1,0 +1,37 @@
+name: Validate Ocean Assets
+
+on:
+  push:
+    paths:
+      - 'public/ocean/**'
+      - 'data/ocean/**'
+      - 'scripts/validate_ocean_assets.py'
+      - '.github/workflows/validate-ocean-assets.yml'
+  pull_request:
+    paths:
+      - 'public/ocean/**'
+      - 'data/ocean/**'
+      - 'scripts/validate_ocean_assets.py'
+      - '.github/workflows/validate-ocean-assets.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install image decoder
+        run: python -m pip install --disable-pip-version-check Pillow
+
+      - name: Validate Ocean assets and metadata
+        run: python scripts/validate_ocean_assets.py
